@@ -17,6 +17,31 @@
         @endif
         <div class="row">
             <h4>Yanıtlanmış Talepler</h4>
+            <form method="post" action="{{route('answered')}}">
+                <div class="row">
+                    <div class="col col-md-3">
+                        <input type="text" name="name" class="form-control" placeholder="Kullanıcı Ad Soyad">
+                    </div>
+                    <div class="col col-md-3">
+                        <select class="form-control" name="status">
+                            <option value="">Statü seç</option>
+                            <option value="1">VIP</option>
+                            <option value="0">RISK</option>
+                        </select>
+                    </div>
+                    <div class="col col-md-3">
+                        <select class="form-control" name="admin">
+                            <option value="">Admin mi?</option>
+                            <option value="1">Admin</option>
+                            <option value="0">Standart Kullanıcı</option>
+                        </select>
+                    </div>
+                    <div class="col col-md-3">
+                        @csrf
+                        <button class="btn btn-primary" name="button" value="search" type="submit">Ara</button>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="row">
             <table class="table">

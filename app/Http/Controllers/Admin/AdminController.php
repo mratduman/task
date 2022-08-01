@@ -11,22 +11,26 @@ use stdClass;
 class AdminController extends Controller
 {
     public function answered(Request $request) {
-        $points = Point::query()
-            ->scopes('Answered')
-            ->scopes('PointUser')
-            ->select('users.name','points.*')
-            ->orderByDesc('points.id');
+        $points = Point::join('users','users.id','=','points.user_id')
+            ->select('users.name','users.status','users.admin','points.*');
 
-        if (empty($request->status)) {
-            $points = $points->get();
+        if (!isset($request->button)) {
+            $points = $points->where(function ($q) {
+                $q->where('points.status', '=', 1)
+                    ->orWhere('points.status', '=', 0);
+            })->orderByDesc('points.id')->get();
             return view('admin.answered',compact('points'));
         }
 
-        $filter = [];
-        $request->status!='' ?: array_push($filter,['points.status'=>$request->status]);
-        $request->username!='' ?: array_push($filter,['users.name','like','%'.$request->username.'%']);
+        $filter = array();
+        if (!empty($request->status))
+            $filter[] = array('users.status', '=', $request->status);
+        if (!empty($request->admin))
+            $filter[] = array('users.admin','=',$request->admin);
+        if (!empty($request->name))
+            $filter[] = array('users.name','like','%'.$request->name.'%');
 
-        $points = $points->where($filter);
+        $points = $points->where($filter)->orderByDesc('points.id')->get();
 
         return view('admin.answered',compact('points'));
     }
